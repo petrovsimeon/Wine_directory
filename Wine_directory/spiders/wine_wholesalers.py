@@ -6,6 +6,7 @@ from selenium.common.exceptions import NoSuchElementException
 from scrapy.selector import Selector
 from scrapy.http import Request
 from time import sleep
+import random
 
 
 class WineWholesalersSpider(Spider):
@@ -18,23 +19,23 @@ class WineWholesalersSpider(Spider):
 
         # Logging into the website
         self.driver = webdriver.Chrome('C:/Coding/chromedriver')
-        sleep (5)
+        sleep(random.randint(1, 5))
         self.driver.get('http://beveragetradenetwork.com/en/users/log-in.htm')
-        sleep(5)
+        sleep (random.randint (1, 5))
 
         # Entering username
         self.driver.find_element_by_id('user').send_keys("conner.nudd@bermar.co.uk")
-        sleep(5)
+        sleep (random.randint (1, 5))
 
         # Entering password
         self.driver.find_element_by_xpath("//div[@id='inlineAJAXLogInForm']/article/form[@id='FrmLoginInLine']/input[@id='password']").send_keys("Ch4mp4gne!")
-        sleep(5)
+        sleep (random.randint (1, 5))
         self.driver.find_element_by_xpath("//div[@id='inlineAJAXLogInForm']/article/form[@id='FrmLoginInLine']/input[@type = 'submit']").send_keys(Keys.ENTER)
-        sleep(5)
+        sleep (random.randint(1, 5))
 
         # Going to Digital Directory
         self.driver.get('http://beveragetradenetwork.com/en/digital-directory/wine-wholesaler-4/page-1/')
-        sleep(5)
+        sleep(random.randint(1, 5))
 
 
         # Getting companies
@@ -47,23 +48,26 @@ class WineWholesalersSpider(Spider):
 
 
 
-        # # Pagination
-        # while True:
-        #     try:
-        #         next_page = self.driver.find_element_by_link_text('NEXT')
-        #         sleep(3)
-        #         next_page.send_keys(Keys.ENTER)
-        #         sleep(3)
-        #         self.logger.info('Sleeping for 3 seconds')
-        #         next_page.click()
-        #
-        #
-        #     except NoSuchElementException:
-        #         self.logger.info('No more pages to load.')
-        #         break
+        # Pagination
+        while True:
+            try:
+                next_page = self.driver.find_element_by_link_text('NEXT')
+                sleep (random.randint (1, 5))
+                next_page.send_keys(Keys.ENTER)
+                sleep (random.randint (1, 5))
+                self.logger.info('Sleeping for 3 seconds')
+                next_page.click()
+
+
+            except NoSuchElementException:
+                self.logger.info('No more pages to load.')
+                break
 
 
     def parse_item(self, response):
+
+        self.driver.get(response.url)
+        response = Selector(text=self.driver.page_source)
 
         name = response.xpath('//div[@class="txt"]/h1/text()').extract()
         country = response.xpath('//div[@class="txt"]/h3/label[text()="Country:"]/following-sibling::text()').extract()
@@ -83,4 +87,6 @@ class WineWholesalersSpider(Spider):
                'Phone and Fax': phonefax, 'Contact Person': contact, 'Title': title,
                'Email': email,'Phone': phone, 'Website': website, 'Linkedin': linkedin,
                'Facebook': facebook, 'Twitter': twitter, 'Description': description}
+
+        sleep (random.randint(1, 5))
 
