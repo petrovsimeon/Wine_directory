@@ -46,7 +46,6 @@ class WineWholesalersSpider(Spider):
             yield Request(url, callback=self.parse_item)
 
 
-
         # # Pagination
         # while True:
         #     try:
